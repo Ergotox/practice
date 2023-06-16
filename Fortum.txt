@@ -1,0 +1,99 @@
+workspace "FORTUM" "GESTION DE ENERGÍA RENOVABLE" {
+
+    model {
+    conductor = person "Conductor" "Conductor de vehículo eléctrico"
+    operador = person "Operador" "Operador de punto de carga"
+    flota = person "Flota" "Flota de vehículos
+    energia = person "Energía" "Proveedor de energía"
+    fortum = softwareSystem "Fortum" "Gestión de energía renovable" "FORTUM" {
+    appweb = container "APPWeb" "Aplicacion web" "React"
+    appmovil = container "APPMovil" "Aplicacion movil" "Java movil"
+    api = container "API" "API gateway" "Node.JS Linux"
+    landing = container "LandingPage" "Landing page"
+    cpo = container "CPO" "Punto de carga" "Java Jakarta"
+    propFlota = container "FLOTA" "Punto de carga" "Java Jakarta"
+    propEnergia = container "ENERGÍA" "Punto de carga" "Java Jakarta"
+    persona = container "PERSONA" "Punto de carga" "Java Jakarta"{
+        ubicacionGPS = component "GPS" ""
+        UbicarPtosdecarga = component "Pto Carga" ""
+        CalculoCostocarga = component "Cálculo costo" ""
+        CargaVehiculo = component "Carga Vehículo"
+        DuracionBateria = component "Duración batería"
+        Pagar = component "Pago" ""
+        TipodeCarga = component "TipoCarga" ""
+        conector = component "Conector gmaps"
+    }
+    cassandra = container "CASSANDRA" "" "Cassandra" "BD"
+    mysql = container "MYSQL" "" "MySQL" "BD"
+    }
+    gmaps = softwareSystem "GMAPS" "Google maps"
+    clima = softwareSystem "Clima" "Weather channel"   
+    pagos = softwareSystem "Pagos" "Pasarela de pagos, visa, master, paypal, correos"
+    
+    conductor -> fortum "consulta"
+    operador -> fortum "consulta"
+    energia -> fortum "informa"
+    flota -> fortum "consulta"
+    fortum -> gmaps "obtiene"
+    fortum -> clima "obtiene"
+    fortum -> pagos "obtiene"
+    
+    conductor -> landing "consulta"
+    operador -> landing "consulta"
+    energia -> landing "informa"
+    flota -> landing "consulta"
+    landing -> appweb "usa"
+    landing -> appmovil "usa"
+    appweb -> api "usa"
+    appmovil -> api "usa"
+    api -> cpo "usa"
+    api -> propFlota "usa"
+    api -> propEnergia "usa"
+    api -> persona "usa"
+    cpo -> cassandra "usa"
+    propFlota -> cassandra "usa"
+    propEnergia -> cassandra "usa"
+    persona -> cassandra "usa"
+    cpo -> mysql "usa"
+    propFlota -> mysql "usa"
+    propEnergia -> mysql "usa"
+    persona -> mysql "usa"
+    api -> gmaps "usa"
+    api -> clima "usa"
+    api -> pagos "usa"
+    api -> persona "usa"
+    
+    ubicacionGPS -> UbicarPtosdecarga "usa"
+    ubicacionGPS -> CalculoCostocarga "usa"
+    ubicacionGPS -> CargaVehiculo "usa" 
+    ubicacionGPS -> DuracionBateria "usa" 
+    ubicacionGPS -> Pagar "usa" 
+    ubicacionGPS -> TipodeCarga "usa"
+    ubicacionGPS -> conector "usa"
+    }
+    views {
+        systemContext fortum {
+            include *
+        }
+        container fortum {
+            include *
+        }
+        component persona {
+            include *
+        }
+        styles {
+            element "FORTUM" {
+                shape "RoundedBox" 
+                background "#d49816" 
+            }
+            element "BD" {
+                shape "Cylinder" 
+                background "#ec0e0e" 
+                color "#ffffff" 
+            }
+        }
+        
+        theme default
+    }
+
+}
